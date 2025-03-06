@@ -26,17 +26,19 @@ import { useForm } from "react-hook-form";
 import { todoFormSchema, TodoFormValues } from "@/schema";
 
 export default function AddTodoForm() {
-    const defaultValues: Partial<TodoFormValues> = {
-      title: "DEFAULT TITLE",
-      body: "DEFAULT BODY",
-    };
-    const form = useForm<TodoFormValues>({
-      resolver: zodResolver(todoFormSchema),
-      defaultValues,
-      mode: "onChange",
-    });
+  const defaultValues: Partial<TodoFormValues> = {
+    title: "DEFAULT TITLE",
+    body: "DEFAULT BODY",
+  };
+  const form = useForm<TodoFormValues>({
+    resolver: zodResolver(todoFormSchema),
+    defaultValues,
+    mode: "onChange",
+  });
 
-    const onSubmit = () => {};
+  const onSubmit = (data:TodoFormValues) => {
+    console.log(data);
+  };
   return (
     <Dialog>
       <DialogTrigger asChild>
@@ -82,18 +84,18 @@ export default function AddTodoForm() {
                       />
                     </FormControl>
                     <FormDescription>
-                        You can write a Short Description about your todo.
+                      You can write a Short Description about your todo.
                     </FormDescription>
                     <FormMessage />
                   </FormItem>
                 )}
               />
+              <DialogFooter>
+                <Button type="submit">Save changes</Button>
+              </DialogFooter>
             </form>
           </Form>
         </div>
-        <DialogFooter>
-          <Button type="submit">Save changes</Button>
-        </DialogFooter>
       </DialogContent>
     </Dialog>
   );
