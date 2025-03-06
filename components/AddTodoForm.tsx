@@ -29,8 +29,8 @@ import { createTodoAction } from "@/actions/todo.actions";
 
 export default function AddTodoForm() {
   const defaultValues: Partial<TodoFormValues> = {
-    title: "DEFAULT TITLE",
-    body: "DEFAULT BODY",
+    title: "",
+    body: "",
     completed: false,
   };
   const form = useForm<TodoFormValues>({
@@ -41,7 +41,7 @@ export default function AddTodoForm() {
 
   const onSubmit = async (data:TodoFormValues) => {
     console.log(data);
-    await createTodoAction({title: data.title, body: data.body, completed: false});
+    await createTodoAction({title: data.title, body: data.body, completed: data.completed});
   };
   return (
     <Dialog>
@@ -95,12 +95,6 @@ export default function AddTodoForm() {
                 )}
               />
               <FormItem>
-                <div className="mb-4">
-                  <FormLabel className="text-base">Sidebar</FormLabel>
-                  <FormDescription>
-                    Select the items you want to display in the sidebar.
-                  </FormDescription>
-                </div>
                 <FormField
                   control={form.control}
                   name="completed"
