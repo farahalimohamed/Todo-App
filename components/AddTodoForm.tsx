@@ -24,11 +24,14 @@ import { Input } from "@/components/ui/input";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { todoFormSchema, TodoFormValues } from "@/schema";
+import { Checkbox } from "./ui/checkbox";
+import { createTodoAction } from "@/actions/todo.actions";
 
 export default function AddTodoForm() {
   const defaultValues: Partial<TodoFormValues> = {
     title: "DEFAULT TITLE",
     body: "DEFAULT BODY",
+    completed: false,
   };
   const form = useForm<TodoFormValues>({
     resolver: zodResolver(todoFormSchema),
@@ -36,8 +39,9 @@ export default function AddTodoForm() {
     mode: "onChange",
   });
 
-  const onSubmit = (data:TodoFormValues) => {
+  const onSubmit = async (data:TodoFormValues) => {
     console.log(data);
+    await createTodoAction({title: data.title, body: data.body, completed: false});
   };
   return (
     <Dialog>
@@ -90,6 +94,34 @@ export default function AddTodoForm() {
                   </FormItem>
                 )}
               />
+              <FormItem>
+                <div className="mb-4">
+                  <FormLabel className="text-base">Sidebar</FormLabel>
+                  <FormDescription>
+                    Select the items you want to display in the sidebar.
+                  </FormDescription>
+                </div>
+                <FormField
+                  control={form.control}
+                  name="completed"
+                  render={({ field }) => {
+                    return (
+                      <FormItem className="flex flex-row items-start space-x-3 space-y-0">
+                        <FormControl>
+                          <Checkbox
+                            checked={field.value}
+                            onCheckedChange={(value) => field.onChange(value)}
+                          />
+                        </FormControl>
+                        <FormLabel className="font-normal">
+                            Completed
+                        </FormLabel>
+                      </FormItem>
+                    );
+                  }}
+                />
+                <FormMessage />
+              </FormItem>
               <DialogFooter>
                 <Button type="submit">Save changes</Button>
               </DialogFooter>

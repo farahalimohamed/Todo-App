@@ -7,6 +7,15 @@ export const getTodoListAction = async () => {
   return await prisma.todo.findMany();
   // ** Error handling
 };
-export const createTodoListAction = async () => {};
-export const updateTodoListAction = async () => {};
-export const deleteTodoListAction = async () => {};
+export const createTodoAction = async ({title, body, completed} :{title:string, body?: string | undefined, completed?:boolean}) => {
+  await prisma.todo.create({
+    data: {
+      title,
+      body,
+      completed
+    },
+  });
+  // ** Error handling
+};
+export const updateTodoAction = async () => {};
+export const deleteTodoAction = async () => {};
