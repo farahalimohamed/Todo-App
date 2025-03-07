@@ -1,4 +1,3 @@
-"use client";
 import {
   Table,
   TableBody,
@@ -9,61 +8,11 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Button } from "./ui/button";
-import { Pen, Trash } from "lucide-react";
 import { ITodo } from "@/interfaces";
 import { Badge } from "./ui/badge";
-import { on } from "events";
-import { deleteTodoAction } from "@/actions/todo.actions";
-import { useState } from "react";
-import Spinner from "./Spinner";
-const invoices = [
-  {
-    invoice: "INV001",
-    paymentStatus: "Paid",
-    totalAmount: "$250.00",
-    paymentMethod: "Credit Card",
-  },
-  {
-    invoice: "INV002",
-    paymentStatus: "Pending",
-    totalAmount: "$150.00",
-    paymentMethod: "PayPal",
-  },
-  {
-    invoice: "INV003",
-    paymentStatus: "Unpaid",
-    totalAmount: "$350.00",
-    paymentMethod: "Bank Transfer",
-  },
-  {
-    invoice: "INV004",
-    paymentStatus: "Paid",
-    totalAmount: "$450.00",
-    paymentMethod: "Credit Card",
-  },
-  {
-    invoice: "INV005",
-    paymentStatus: "Paid",
-    totalAmount: "$550.00",
-    paymentMethod: "PayPal",
-  },
-  {
-    invoice: "INV006",
-    paymentStatus: "Pending",
-    totalAmount: "$200.00",
-    paymentMethod: "Bank Transfer",
-  },
-  {
-    invoice: "INV007",
-    paymentStatus: "Unpaid",
-    totalAmount: "$300.00",
-    paymentMethod: "Credit Card",
-  },
-];
+import TodosTableActions from "./TodosTableActions";
 
 export default function TodoTable({ todos }: { todos: ITodo[] }) {
-  const [loading, setLoading] = useState(false)
   return (
     <Table>
       <TableCaption>A list of your recent invoices.</TableCaption>
@@ -88,20 +37,7 @@ export default function TodoTable({ todos }: { todos: ITodo[] }) {
               )}
             </TableCell>
             <TableCell className="flex items-center justify-end space-x-2">
-              <Button size={"icon"}>
-                <Pen size={16} />
-              </Button>
-              <Button
-                variant={"destructive"}
-                size={"icon"}
-                onClick={async () => {
-                  setLoading(true);
-                  await deleteTodoAction({ id: todo.id });
-                  setLoading(false);
-                }}
-              >
-                {loading ? <Spinner /> : <Trash size={16} />}
-              </Button>
+              <TodosTableActions id={todo.id}/>
             </TableCell>
           </TableRow>
         ))}
