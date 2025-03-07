@@ -18,4 +18,11 @@ export const createTodoAction = async ({title, body, completed} :{title:string, 
   // ** Error handling
 };
 export const updateTodoAction = async () => {};
-export const deleteTodoAction = async () => {};
+export const deleteTodoAction = async ({id}: {id:string}) => {
+  await prisma.todo.delete({
+    where: {
+      id,
+    },
+  });
+  // ** Error handling
+};
