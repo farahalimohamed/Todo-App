@@ -1,6 +1,4 @@
-import React from "react";
-
-export default function Spinner() {
+const Spinner = () => {
   return (
     <svg
       className="size-5 animate-spin"
@@ -24,3 +22,5 @@ export default function Spinner() {
     </svg>
   );
 }
+
+export default Spinner

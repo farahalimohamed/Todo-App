@@ -12,7 +12,7 @@ import { ITodo } from "@/interfaces";
 import { Badge } from "./ui/badge";
 import TodosTableActions from "./TodosTableActions";
 
-export default function TodoTable({ todos }: { todos: ITodo[] }) {
+const TodoTable = ({ todos }: { todos: ITodo[] }) => {
   return (
     <Table>
       <TableCaption>A list of your recent invoices.</TableCaption>
@@ -37,7 +37,7 @@ export default function TodoTable({ todos }: { todos: ITodo[] }) {
               )}
             </TableCell>
             <TableCell className="flex items-center justify-end space-x-2">
-              <TodosTableActions id={todo.id}/>
+              <TodosTableActions id={todo.id} />
             </TableCell>
           </TableRow>
         ))}
@@ -50,4 +50,6 @@ export default function TodoTable({ todos }: { todos: ITodo[] }) {
       </TableFooter>
     </Table>
   );
-}
+};
+
+export default TodoTable

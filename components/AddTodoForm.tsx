@@ -29,8 +29,10 @@ import { createTodoAction } from "@/actions/todo.actions";
 import { useState } from "react";
 import Spinner from "./Spinner";
 
-export default function AddTodoForm() {
+
+const AddTodoForm = () => {
   const [loading, setLoading] = useState(false);
+  const [open, setOpen] = useState(false)
   const defaultValues: Partial<TodoFormValues> = {
     title: "",
     body: "",
@@ -42,17 +44,18 @@ export default function AddTodoForm() {
     mode: "onChange",
   });
 
-  const onSubmit = async (data: TodoFormValues) => {
+  const onSubmit = async ({title, body, completed}: TodoFormValues) => {
     setLoading(true);
     await createTodoAction({
-      title: data.title,
-      body: data.body,
-      completed: data.completed,
+      title,
+      body,
+      completed,
     });
     setLoading(false);
+    setOpen(false);
   };
   return (
-    <Dialog>
+    <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
         <Button>
           <Plus size={14} />
@@ -137,3 +140,5 @@ export default function AddTodoForm() {
     </Dialog>
   );
 }
+
+export default AddTodoForm
