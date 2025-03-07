@@ -10,7 +10,8 @@ import {
 } from "@/components/ui/table";
 import { Button } from "./ui/button";
 import { Pen, Trash } from "lucide-react";
-
+import { ITodo } from "@/interfaces";
+import { Badge } from "./ui/badge";
 const invoices = [
   {
     invoice: "INV001",
@@ -56,7 +57,7 @@ const invoices = [
   },
 ];
 
-export default function TodoTable() {
+export default function TodoTable({todos}: {todos: ITodo[]}) {
   return (
     <Table>
       <TableCaption>A list of your recent invoices.</TableCaption>
@@ -69,17 +70,23 @@ export default function TodoTable() {
         </TableRow>
       </TableHeader>
       <TableBody>
-        {invoices.map((invoice) => (
-          <TableRow key={invoice.invoice}>
-            <TableCell className="font-medium">{invoice.invoice}</TableCell>
-            <TableCell>{invoice.paymentStatus}</TableCell>
-            <TableCell>{invoice.paymentMethod}</TableCell>
+        {todos.map((todo) => (
+          <TableRow key={todo.id}>
+            <TableCell className="font-medium">{todo.id}</TableCell>
+            <TableCell>{todo.title}</TableCell>
+            <TableCell>
+              {todo.completed ? (
+                <Badge>Completed</Badge>
+              ) : (
+                <Badge variant={'secondary'}>Uncompleted</Badge>
+              )}
+            </TableCell>
             <TableCell className="flex items-center justify-end space-x-2">
               <Button size={"icon"}>
-                <Pen size={16}/>
+                <Pen size={16} />
               </Button>
-              <Button variant={'destructive'} size={"icon"}>
-                <Trash size={16}/>
+              <Button variant={"destructive"} size={"icon"}>
+                <Trash size={16} />
               </Button>
             </TableCell>
           </TableRow>
@@ -88,7 +95,7 @@ export default function TodoTable() {
       <TableFooter>
         <TableRow>
           <TableCell colSpan={3}>Total</TableCell>
-          <TableCell className="text-right">$2,500.00</TableCell>
+          <TableCell className="text-right">{todos.length}</TableCell>
         </TableRow>
       </TableFooter>
     </Table>
