@@ -22,12 +22,15 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
+import { set, useForm } from "react-hook-form";
 import { todoFormSchema, TodoFormValues } from "@/schema";
 import { Checkbox } from "./ui/checkbox";
 import { createTodoAction } from "@/actions/todo.actions";
+import { useState } from "react";
+import Spinner from "./Spinner";
 
 export default function AddTodoForm() {
+  const [loading, setLoading] = useState(false);
   const defaultValues: Partial<TodoFormValues> = {
     title: "",
     body: "",
@@ -39,9 +42,14 @@ export default function AddTodoForm() {
     mode: "onChange",
   });
 
-  const onSubmit = async (data:TodoFormValues) => {
-    console.log(data);
-    await createTodoAction({title: data.title, body: data.body, completed: data.completed});
+  const onSubmit = async (data: TodoFormValues) => {
+    setLoading(true);
+    await createTodoAction({
+      title: data.title,
+      body: data.body,
+      completed: data.completed,
+    });
+    setLoading(false);
   };
   return (
     <Dialog>
@@ -53,10 +61,7 @@ export default function AddTodoForm() {
       </DialogTrigger>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
-          <DialogTitle>Edit profile</DialogTitle>
-          <DialogDescription>
-            Make changes to your profile here. Click save when you&apos;re done.
-          </DialogDescription>
+          <DialogTitle>Add A New Todo</DialogTitle>
         </DialogHeader>
         <div className="py-4">
           <Form {...form}>
@@ -82,7 +87,7 @@ export default function AddTodoForm() {
                     <FormLabel>Short Description</FormLabel>
                     <FormControl>
                       <Textarea
-                        placeholder="Tell us a little bit about yourself"
+                        placeholder="Do 10 pushups and 10 squats"
                         className="resize-none"
                         {...field}
                       />
@@ -107,9 +112,7 @@ export default function AddTodoForm() {
                             onCheckedChange={(value) => field.onChange(value)}
                           />
                         </FormControl>
-                        <FormLabel className="font-normal">
-                            Completed
-                        </FormLabel>
+                        <FormLabel className="font-normal">Completed</FormLabel>
                       </FormItem>
                     );
                   }}
@@ -117,7 +120,15 @@ export default function AddTodoForm() {
                 <FormMessage />
               </FormItem>
               <DialogFooter>
-                <Button type="submit">Save changes</Button>
+                <Button type="submit" disabled={loading}>
+                  {loading ? (
+                    <>
+                      <Spinner /> Saving
+                    </>
+                  ) : (
+                    "Save"
+                  )}
+                </Button>
               </DialogFooter>
             </form>
           </Form>
