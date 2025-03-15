@@ -11,13 +11,13 @@ const TodosTableActions = ({ todo }: { todo: ITodo }) => {
   const [loading, setLoading] = useState(false);
   return (
     <>
-      <EditTodoForm todo= {todo}/>
+      <EditTodoForm todo={todo} />
       <Button
         variant={"destructive"}
         size={"icon"}
         onClick={async () => {
           setLoading(true);
-          await deleteTodoAction({ id: todo.id });
+          await deleteTodoAction({ id: todo?.id });
           setLoading(false);
         }}
       >

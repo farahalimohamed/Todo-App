@@ -24,7 +24,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { set, useForm } from "react-hook-form";
 import { todoFormSchema, TodoFormValues } from "@/schema";
 import { Checkbox } from "./ui/checkbox";
-import { createTodoAction } from "@/actions/todo.actions";
+import { createTodoAction, updateTodoAction } from "@/actions/todo.actions";
 import { useState } from "react";
 import Spinner from "./Spinner";
 import { ITodo } from "@/interfaces";
@@ -43,14 +43,15 @@ const EditTodoForm = ({ todo }: { todo: ITodo }) => {
     mode: "onChange",
   });
 
-  const onSubmit = async ({ title, body, completed }: TodoFormValues) => {
+  const onSubmit = async ({title, body, completed}: TodoFormValues) => {
     setLoading(true);
     // TODO Update Todo Action
-    // await createTodoAction({
-    //   title,
-    //   body,
-    //   completed,
-    // });
+    await updateTodoAction({
+      id: todo.id,
+      title,
+      body: body as string,
+      completed,
+    })
     setLoading(false);
     setOpen(false);
   };
