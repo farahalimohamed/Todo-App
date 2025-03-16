@@ -30,7 +30,7 @@ import { useState } from "react";
 import Spinner from "./Spinner";
 
 
-const AddTodoForm = () => {
+const AddTodoForm = ({userId}:{userId: string | null}) => {
   const [loading, setLoading] = useState(false);
   const [open, setOpen] = useState(false)
   const defaultValues: Partial<TodoFormValues> = {
@@ -50,6 +50,7 @@ const AddTodoForm = () => {
       title,
       body,
       completed,
+      userId
     });
     setLoading(false);
     setOpen(false);
