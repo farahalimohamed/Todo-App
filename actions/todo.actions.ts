@@ -5,8 +5,11 @@ import { revalidatePath } from "next/cache";
 
 const prisma = new PrismaClient();
 
-export const getTodoListAction = async () => {
+export const getUserTodoListAction = async ({userId}:{userId: string | null}) => {
   return await prisma.todo.findMany({
+    where:{
+      userId: userId as string,
+    },
     orderBy: {
       createdAt: "desc",
     },
