@@ -1,4 +1,25 @@
 "use client";
+import { useState } from "react";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { todoFormSchema, TodoFormValues } from "@/schema";
+import { updateTodoAction } from "@/actions/todo.actions";
+import { ITodo } from "@/interfaces";
+import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { Pen } from "lucide-react";
+import Spinner from "./Spinner";
+import toast from "react-hot-toast";
+import {
+  Dialog,
+  DialogContent,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 import {
   Form,
   FormControl,
@@ -8,53 +29,43 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { Textarea } from "@/components/ui/textarea";
-import { Button } from "@/components/ui/button";
-import { Pen } from "lucide-react";
-import {
-  Dialog,
-  DialogContent,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
-import { Input } from "@/components/ui/input";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { set, useForm } from "react-hook-form";
-import { todoFormSchema, TodoFormValues } from "@/schema";
-import { Checkbox } from "./ui/checkbox";
-import { createTodoAction, updateTodoAction } from "@/actions/todo.actions";
-import { useState } from "react";
-import Spinner from "./Spinner";
-import { ITodo } from "@/interfaces";
 
 const EditTodoForm = ({ todo }: { todo: ITodo }) => {
   const [loading, setLoading] = useState(false);
   const [open, setOpen] = useState(false);
+
   const defaultValues: Partial<TodoFormValues> = {
     title: todo.title,
     body: todo.body as string,
     completed: todo.completed,
   };
+
   const form = useForm<TodoFormValues>({
     resolver: zodResolver(todoFormSchema),
     defaultValues,
     mode: "onChange",
   });
 
-  const onSubmit = async ({title, body, completed}: TodoFormValues) => {
+  const onSubmit = async ({ title, body, completed }: TodoFormValues) => {
     setLoading(true);
-    // TODO Update Todo Action
-    await updateTodoAction({
-      id: todo.id,
-      title,
-      body: body as string,
-      completed,
-    })
-    setLoading(false);
-    setOpen(false);
+    try {
+      await updateTodoAction({
+        id: todo.id,
+        title,
+        body: body as string,
+        completed,
+      });
+      toast.success("Todo updated successfully!");
+    } catch (error) {
+      toast.error(
+        error instanceof Error ? error.message : "Something went wrong"
+      );
+    } finally {
+      setLoading(false);
+      setOpen(false);
+    }
   };
+
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
@@ -102,26 +113,22 @@ const EditTodoForm = ({ todo }: { todo: ITodo }) => {
                   </FormItem>
                 )}
               />
-              <FormItem>
-                <FormField
-                  control={form.control}
-                  name="completed"
-                  render={({ field }) => {
-                    return (
-                      <FormItem className="flex flex-row items-start space-x-3 space-y-0">
-                        <FormControl>
-                          <Checkbox
-                            checked={field.value}
-                            onCheckedChange={(value) => field.onChange(value)}
-                          />
-                        </FormControl>
-                        <FormLabel className="font-normal">Completed</FormLabel>
-                      </FormItem>
-                    );
-                  }}
-                />
-                <FormMessage />
-              </FormItem>
+              <FormField
+                control={form.control}
+                name="completed"
+                render={({ field }) => (
+                  <FormItem className="flex flex-row items-start space-x-3 space-y-0">
+                    <FormControl>
+                      <Checkbox
+                        checked={field.value}
+                        onCheckedChange={(value) => field.onChange(value)}
+                      />
+                    </FormControl>
+                    <FormLabel className="font-normal">Completed</FormLabel>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
               <DialogFooter>
                 <Button type="submit" disabled={loading}>
                   {loading ? (

@@ -1,16 +1,16 @@
 "use client";
-import {
-  Form,
-  FormControl,
-  FormDescription,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form";
-import { Textarea } from "@/components/ui/textarea";
+import { useState } from "react";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { todoFormSchema, TodoFormValues } from "@/schema";
+import { createTodoAction } from "@/actions/todo.actions";
 import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 import { Plus } from "lucide-react";
+import Spinner from "./Spinner";
+import toast from "react-hot-toast";
 import {
   Dialog,
   DialogContent,
@@ -20,49 +20,63 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { Input } from "@/components/ui/input";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { set, useForm } from "react-hook-form";
-import { todoFormSchema, TodoFormValues } from "@/schema";
-import { Checkbox } from "./ui/checkbox";
-import { createTodoAction } from "@/actions/todo.actions";
-import { useState } from "react";
-import Spinner from "./Spinner";
+import {
+  Form,
+  FormControl,
+  FormDescription,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
 
-
-const AddTodoForm = ({userId}:{userId: string | null}) => {
+const AddTodoForm = ({ userId }: { userId: string | null }) => {
   const [loading, setLoading] = useState(false);
-  const [open, setOpen] = useState(false)
+  const [open, setOpen] = useState(false);
+
   const defaultValues: Partial<TodoFormValues> = {
     title: "",
     body: "",
     completed: false,
   };
+
   const form = useForm<TodoFormValues>({
     resolver: zodResolver(todoFormSchema),
     defaultValues,
     mode: "onChange",
   });
 
-  const onSubmit = async ({title, body, completed}: TodoFormValues) => {
+  const onSubmit = async ({ title, body, completed }: TodoFormValues) => {
     setLoading(true);
-    await createTodoAction({
-      title,
-      body,
-      completed,
-      userId
-    });
-    setLoading(false);
-    setOpen(false);
+    try {
+      await createTodoAction({
+        title,
+        body,
+        completed,
+        userId,
+      });
+      form.reset();
+      toast.success("Todo created successfully!");
+    } catch (error) {
+      toast.error(
+        error instanceof Error ? error.message : "Something went wrong"
+      );
+    } finally {
+      setLoading(false);
+      setOpen(false);
+    }
   };
+
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger asChild>
-        <Button>
-          <Plus size={14} />
-          New Todo
-        </Button>
-      </DialogTrigger>
+      <div className="flex justify-end">
+        <DialogTrigger asChild>
+          <Button className="w-auto">
+            <Plus size={14} className="mr-1" />
+            New Todo
+          </Button>
+        </DialogTrigger>
+      </div>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
           <DialogTitle>Add A New Todo</DialogTitle>
@@ -103,26 +117,22 @@ const AddTodoForm = ({userId}:{userId: string | null}) => {
                   </FormItem>
                 )}
               />
-              <FormItem>
-                <FormField
-                  control={form.control}
-                  name="completed"
-                  render={({ field }) => {
-                    return (
-                      <FormItem className="flex flex-row items-start space-x-3 space-y-0">
-                        <FormControl>
-                          <Checkbox
-                            checked={field.value}
-                            onCheckedChange={(value) => field.onChange(value)}
-                          />
-                        </FormControl>
-                        <FormLabel className="font-normal">Completed</FormLabel>
-                      </FormItem>
-                    );
-                  }}
-                />
-                <FormMessage />
-              </FormItem>
+              <FormField
+                control={form.control}
+                name="completed"
+                render={({ field }) => (
+                  <FormItem className="flex flex-row items-start space-x-3 space-y-0">
+                    <FormControl>
+                      <Checkbox
+                        checked={field.value}
+                        onCheckedChange={(value) => field.onChange(value)}
+                      />
+                    </FormControl>
+                    <FormLabel className="font-normal">Completed</FormLabel>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
               <DialogFooter>
                 <Button type="submit" disabled={loading}>
                   {loading ? (
@@ -140,6 +150,6 @@ const AddTodoForm = ({userId}:{userId: string | null}) => {
       </DialogContent>
     </Dialog>
   );
-}
+};
 
-export default AddTodoForm
+export default AddTodoForm;
