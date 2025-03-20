@@ -4,14 +4,15 @@ const prisma = new PrismaClient();
 
 async function main() {
   // ** Generate fake data for Todo model
-  await prisma.todo.createMany({
-    data: Array.from({ length: 25 }, () => {
-      return {
-        title: faker.lorem.words({min: 2, max: 5}),
-        body: faker.lorem.words({min: 1, max: 10}),
-      };
-    }),
-  });
+  // await prisma.todo.createMany({
+  //   data: Array.from({ length: 25 }, () => {
+  //     return {
+  //       title: faker.lorem.words({ min: 2, max: 5 }),
+  //       body: faker.lorem.words({ min: 1, max: 10 }),
+  //       userId: "user_2uMvvz2n2A1sKxUJonvLUtmEdAn",
+  //     };
+  //   }),
+  // });
   // ** Generate fake data for User model
   // await prisma.user.createMany({
   //   data: Array.from({ length: 25 }, () => {
