@@ -8,6 +8,6 @@
   ],
   "env": {
     "NODE_ENV": "production",
-    "DATABASE_URL": "@database_url"
+    "DATABASE_URL": "mongodb+srv://simfarahali3093:zV4KeGv2Riau7Btf@cluster0.jqutm.mongodb.net/todo"
   }
 }
