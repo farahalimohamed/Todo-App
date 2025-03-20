@@ -5,59 +5,82 @@ import { revalidatePath } from "next/cache";
 
 const prisma = new PrismaClient();
 
-export const getTodoListAction = async () => {
-  return await prisma.todo.findMany({
-    orderBy: {
-      createdAt: "desc",
-    },
-  });
-  // ** Error handling
+export const getUserTodoListAction = async ({
+  userId,
+}: {
+  userId: string | null;
+}) => {
+  try {
+    return await prisma.todo.findMany({
+      where: {
+        userId: userId as string,
+      },
+      orderBy: {
+        createdAt: "desc",
+      },
+    });
+  } catch (error) {
+    throw new Error("Failed to fetch todos");
+  }
 };
 export const createTodoAction = async ({
   title,
   body,
   completed,
+  userId,
 }: {
   title: string;
   body?: string | undefined;
   completed: boolean;
+  userId: string | null;
 }) => {
-  await prisma.todo.create({
-    data: {
-      title,
-      body,
-      completed,
-    },
-  });
-
-  revalidatePath("/");
-  // ** Error handling
+  try {
+    await prisma.todo.create({
+      data: {
+        title,
+        body,
+        completed,
+        userId: userId as string,
+      },
+    });
+    revalidatePath("/");
+  } catch (error) {
+    throw new Error("Failed to create todo");
+  }
 };
+
 export const updateTodoAction = async ({
   id,
   title,
   body,
   completed,
 }: ITodo) => {
-  await prisma.todo.update({
-    where: {
-      id,
-    },
-    data: {
-      title: title,
-      body: body,
-      completed: completed,
-    },
-  });
-  revalidatePath("/");
-  // ** Error handling
+  try {
+    await prisma.todo.update({
+      where: {
+        id,
+      },
+      data: {
+        title,
+        body,
+        completed,
+      },
+    });
+    revalidatePath("/");
+  } catch (error) {
+    throw new Error("Failed to update todo");
+  }
 };
+
 export const deleteTodoAction = async ({ id }: { id: string }) => {
-  await prisma.todo.delete({
-    where: {
-      id,
-    },
-  });
-  revalidatePath("/");
-  // ** Error handling
+  try {
+    await prisma.todo.delete({
+      where: {
+        id,
+      },
+    });
+    revalidatePath("/");
+  } catch (error) {
+    throw new Error("Failed to delete todo");
+  }
 };

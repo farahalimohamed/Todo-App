@@ -5,3 +5,5 @@ export interface ITodo {
     completed: boolean;
     createdAt?: Date;
 }
+
+export * from "./todo-form-props";
